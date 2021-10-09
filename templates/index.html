@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="10">
+    <link href="{{ url_for('static', filename='main.css') }}" rel="stylesheet">
+    <title>Ementa | Placeholder </title>
+
+    <style>
+        body.view {
+            background: url({{ url_for('static', filename='media/menu.png') + '?version=' + timestamp }}) no-repeat center center fixed;
+            background-size: contain;
+        }
+    </style>
+</head>
+<body class="view">
+</body>
+</html>
