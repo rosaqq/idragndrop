@@ -4,6 +4,8 @@ from flask import Flask, render_template
 
 import os
 from flask import Flask, flash, request, redirect, url_for
+from flask_socketio import SocketIO, emit
+
 from werkzeug.utils import secure_filename
 
 UPLOAD_FOLDER = 'static/media'
@@ -12,6 +14,7 @@ ALLOWED_EXTENSIONS = {'png', 'jpg'}
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.secret_key = f'{random.randint(0, 99999)}yeet{random.randint(0, 99999)}yeet{random.randint(0, 99999)}'
+socketio = SocketIO(app)
 
 
 def allowed_file(filename):
@@ -38,12 +41,23 @@ def upload():
         if file and allowed_file(file.filename):
             filename = 'menu.png'  # secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            socketio.emit('upload')
         else:
             return json.dumps({'success': False, 'error': f'Formato não suportado'})
-
         return json.dumps({'success': True, 'error': ''})
     return render_template('upload.html')
 
 
+@socketio.on('connect')
+def handle_connection():
+    print('Client connected!')
+
+
+@socketio.on('event1')
+def handle_message(data):
+    print('Client: ' + data)
+    emit('event1', 'hi')
+
+
 if __name__ == '__main__':
-    app.run()
+    socketio.run(app)
